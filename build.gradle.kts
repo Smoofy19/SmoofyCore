@@ -18,8 +18,6 @@ allprojects {
     dependencies {
         implementation(rootProject.libs.paper)
 
-        compileOnly(rootProject.libs.luckperms)
-
         annotationProcessor(rootProject.libs.lombok)
         compileOnly(rootProject.libs.lombok)
     }
