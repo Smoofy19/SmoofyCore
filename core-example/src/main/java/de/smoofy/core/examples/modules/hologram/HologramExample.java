@@ -20,7 +20,7 @@ public class HologramExample {
         var hologram = Core.instance().hologramProvider().create("test", Arrays.asList(
                 Component.text("Hallo", NamedTextColor.RED),
                 Component.text("Welt", NamedTextColor.BLUE)
-        ), player.bukkitPlayer().getLocation());
+        ), player.bukkitPlayer().get().getLocation());
         hologram.spawn(player);
     }
 

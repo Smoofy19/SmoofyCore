@@ -9,11 +9,14 @@ package de.smoofy.core.api.player;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.luckperms.api.model.group.Group;
+import net.luckperms.api.model.user.User;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface ICorePlayer {
@@ -31,6 +34,20 @@ public interface ICorePlayer {
      * @return the player's UUID
      */
     UUID uuid();
+
+    /**
+     * Get the Luckperms User of the player.
+     *
+     * @return the luckperms User
+     */
+    Optional<User> user();
+
+    /**
+     * Get the Luckperms Group of the player.
+     *
+     * @return the luckperms Group
+     */
+    Optional<Group> group();
 
     /**
      * Get the display name of the player.
@@ -51,7 +68,7 @@ public interface ICorePlayer {
      *
      * @return {@link Player}
      */
-    Player bukkitPlayer();
+    Optional<Player> bukkitPlayer();
 
     /**
      * Get the inventory of the player.
@@ -72,7 +89,7 @@ public interface ICorePlayer {
      *
      * @return {@link com.velocitypowered.api.proxy.Player}
      */
-    com.velocitypowered.api.proxy.Player velocityPlayer();
+    Optional<com.velocitypowered.api.proxy.Player> velocityPlayer();
 
     /**
      * Check if the player is online.

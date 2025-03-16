@@ -29,12 +29,7 @@ public class CorePlayerProviderImpl implements ICorePlayerProvider {
 
     @Override
     public ICorePlayer corePlayer(Player player) {
-        if (this.corePlayerCache.containsKey(player)) {
-            return this.corePlayerCache.get(player);
-        }
-        var corePlayer = new CorePlayer(player);
-        this.cacheCorePlayer(corePlayer);
-        return corePlayer;
+        return this.corePlayer(player.getUniqueId());
     }
 
     @Override
@@ -88,9 +83,5 @@ public class CorePlayerProviderImpl implements ICorePlayerProvider {
         this.corePlayers.add(player);
         this.corePlayerCache.put(player.uuid(), player);
         this.corePlayerCache.put(player.name(), player);
-        if (!Core.instance().isPaper()) {
-            return;
-        }
-        this.corePlayerCache.put(player.bukkitPlayer(), player);
     }
 }

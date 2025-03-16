@@ -1,4 +1,4 @@
-import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
+import net.minecrell.pluginyml.paper.PaperPluginDescription
 
 plugins {
     alias(libs.plugins.shadow)
@@ -20,9 +20,6 @@ dependencies {
 
     compileOnly(libs.velocity)
 
-    implementation(libs.packetevents)
-    implementation(libs.entitylib)
-
     implementation(libs.evelon)
 }
 
@@ -33,12 +30,19 @@ tasks.shadowJar {
     }
 }
 
+tasks.reobfJar {
+    dependsOn(tasks.shadowJar)
+}
+
 paper {
     name = "Core"
     version = project.version.toString()
     author = "Smoofy"
     apiVersion = "1.21"
     main = "de.smoofy.core.base.bootstrap.PaperBootstrap"
-
-    load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
+    serverDependencies {
+        register("LuckPerms") {
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+    }
 }

@@ -15,7 +15,11 @@ import net.kyori.adventure.text.format.NamedTextColor;
 public class CorePlayerExample {
 
     public void test(ICorePlayer player, String test) {
-        if (test.equalsIgnoreCase("message")) {
+        if (test.equalsIgnoreCase("displayname")) {
+            player.message(player.displayName());
+        } else if (test.equalsIgnoreCase("color")) {
+            player.message(Component.text("Nachricht in Farbe " + player.color().toString(), player.color()));
+        } else if (test.equalsIgnoreCase("message")) {
             player.message(Component.text("Test Message", NamedTextColor.GOLD));
         } else if (test.equalsIgnoreCase("pmessage")) {
             player.pMessage(Component.text("Test Prefix message", NamedTextColor.AQUA));

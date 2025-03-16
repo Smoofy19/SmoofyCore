@@ -14,10 +14,14 @@ import de.smoofy.core.base.database.DatabaseProvider;
 import dev.httpmarco.evelon.PrimaryKey;
 import dev.httpmarco.evelon.Repository;
 import dev.httpmarco.evelon.Row;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
+import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.model.group.Group;
+import net.luckperms.api.model.user.User;
 import org.apache.commons.lang3.NotImplementedException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -27,6 +31,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
+import java.util.Optional;
 import java.util.UUID;
 
 public class CorePlayer implements ICorePlayer {
@@ -45,7 +50,7 @@ public class CorePlayer implements ICorePlayer {
     private BukkitTask actionBarTask;
 
     @Row(ignore = true)
-    private Repository<CorePlayer> repository = DatabaseProvider.instance().corePlayerRepository();
+    private final Repository<CorePlayer> repository = DatabaseProvider.instance().corePlayerRepository();
 
     public CorePlayer(UUID uniqueId, String name, int coins, int onlineTime, int playTime, int nickState) {
         this.uniqueId = uniqueId;
@@ -85,21 +90,41 @@ public class CorePlayer implements ICorePlayer {
     }
 
     @Override
+    public Optional<User> user() {
+        return Optional.ofNullable(LuckPermsProvider.get().getUserManager().getUser(this.uuid()));
+    }
+
+    @Override
+    public Optional<Group> group() {
+        return this.user().map(user -> LuckPermsProvider.get().getGroupManager().getGroup(user.getPrimaryGroup()));
+    }
+
+    @Override
     public Component displayName() {
-        return this.bukkitPlayer().displayName();
+        return Component.text(this.name, this.color());
     }
 
     @Override
     public NamedTextColor color() {
-        return (NamedTextColor) this.bukkitPlayer().displayName().color();
+        return this.group()
+                .map(Group::getDisplayName)
+                .filter(name -> name.contains("<") && name.contains(">"))
+                .map(name -> name.split("[<>]"))
+                .filter(parts -> parts.length > 1 && !parts[1].isEmpty())
+                .map(parts -> "<" + parts[1] + ">")
+                .map(color -> (NamedTextColor) MiniMessage.miniMessage().deserialize(color).color())
+                .orElse(NamedTextColor.GRAY);
     }
 
     @Override
-    public Player bukkitPlayer() {
-        return Bukkit.getPlayer(this.uuid());
+    public Optional<Player> bukkitPlayer() {
+        return Optional.ofNullable(Bukkit.getPlayer(uuid()));
     }
 
     @Override
+    public Optional<com.velocitypowered.api.proxy.Player> velocityPlayer() {
+        return VelocityBootstrap.instance().proxyServer().getPlayer(this.uuid());
+
     public PlayerInventory inventory() {
         return this.bukkitPlayer().getInventory();
     }
@@ -116,7 +141,7 @@ public class CorePlayer implements ICorePlayer {
 
     @Override
     public boolean isOnline() {
-        return this.velocityPlayer() != null;
+        return this.velocityPlayer().isPresent();
     }
 
     @Override
@@ -162,9 +187,9 @@ public class CorePlayer implements ICorePlayer {
     @Override
     public void message(Component message) {
         if (Core.instance().isPaper()) {
-            this.bukkitPlayer().sendMessage(message);
+            this.bukkitPlayer().ifPresent(player -> player.sendMessage(message));
         } else {
-            this.velocityPlayer().sendMessage(message);
+            this.velocityPlayer().ifPresent(player -> player.sendMessage(message));
         }
     }
 
@@ -208,11 +233,7 @@ public class CorePlayer implements ICorePlayer {
 
     @Override
     public void sendActionBar(Component message) {
-        if (this.bukkitPlayer() == null) {
-            this.actionBarTask.cancel();
-            return;
-        }
-        this.bukkitPlayer().sendActionBar(message);
+        this.bukkitPlayer().ifPresentOrElse(player -> player.sendActionBar(message), () -> this.actionBarTask.cancel());
     }
 
     @Override
@@ -232,12 +253,13 @@ public class CorePlayer implements ICorePlayer {
         if (fadeIn == -1 || stay == -1 || fadeOut == -1) {
             times = Title.DEFAULT_TIMES;
         }
-        this.bukkitPlayer().showTitle(Title.title(title, subtitle, times));
+        var finalTimes = times;
+        this.bukkitPlayer().ifPresent(player -> player.showTitle(Title.title(title, subtitle, finalTimes)));
     }
 
     @Override
     public void resetTitle() {
-        this.bukkitPlayer().resetTitle();
+        this.bukkitPlayer().ifPresent(Audience::clearTitle);
     }
 
     private void setDatabaseValues() {

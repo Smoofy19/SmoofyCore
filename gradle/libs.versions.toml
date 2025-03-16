@@ -2,8 +2,7 @@
 paper = "1.21.4-R0.1-SNAPSHOT"
 velocity = "3.1.1"
 
-packetevents = "2.5.0"
-entitylib = "2.4.10-SNAPSHOT"
+luckperms = "5.4"
 
 evelon = "1.0.46-SNAPSHOT"
 
@@ -23,8 +22,7 @@ paperweight = { id = "io.papermc.paperweight.userdev", version.ref = "paperweigh
 paper = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper" }
 velocity = { group = "com.velocitypowered", name = "velocity-api", version.ref = "velocity" }
 
-packetevents = { group = "com.github.retrooper", name = "packetevents-spigot", version.ref = "packetevents" }
-entitylib = { group = "me.tofaa.entitylib", name = "spigot", version.ref = "entitylib" }
+luckperms = { group = "net.luckperms", name = "api", version.ref = "luckperms" }
 
 evelon = { group = "dev.httpmarco.evelon", name = "evelon-sql-mariadb", version.ref = "evelon" }
 
