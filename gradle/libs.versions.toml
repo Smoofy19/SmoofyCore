@@ -12,7 +12,7 @@ jansi = "2.4.1"
 
 shadow = "8.1.1"
 plugindescription = "0.6.0"
-paperweight = "2.0.0-beta.14"
+paperweight = "2.0.0-SNAPSHOT"
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow"}
