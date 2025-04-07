@@ -7,7 +7,7 @@ entitylib = "2.4.10-SNAPSHOT"
 
 evelon = "1.0.46-SNAPSHOT"
 
-lombok = "1.18.36"
+lombok = "1.18.38"
 jansi = "2.4.1"
 
 shadow = "8.1.1"
