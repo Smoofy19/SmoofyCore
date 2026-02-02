@@ -1,6 +1,6 @@
 [versions]
 paper = "1.21.4-R0.1-SNAPSHOT"
-velocity = "3.1.1"
+velocity = "3.4.0"
 
 packetevents = "2.5.0"
 entitylib = "2.4.10-SNAPSHOT"
